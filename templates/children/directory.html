@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Children Directory{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Children Directory</h2>
+        <a href="{% url 'add-child' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Child
+        </a>
+    </div>
+    <div class="card-body">
+        <!-- Search -->
+        <form method="get" class="search-box">
+            <input type="text" name="search" placeholder="Search by name or child ID..." value="{{ search_query }}">
+            <select name="school" class="form-control" style="width: 200px;">
+                <option value="">All Schools</option>
+                {% for school in schools %}
+                <option value="{{ school.id }}">{{ school.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Search
+            </button>
+            {% if search_query %}
+            <a href="{% url 'children-directory' %}" class="btn btn-outline">Clear</a>
+            {% endif %}
+        </form>
+
+        <!-- Table -->
+        <div class="table-container">
+            {% if children %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Child ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>School</th>
+                        <th>Household</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for child in children %}
+                    <tr>
+                        <td>
+                            {% if child.profile_photo %}
+                            <img src="{{ child.profile_photo.url }}" class="child-photo" alt="">
+                            {% else %}
+                            <div class="child-avatar">{{ child.first_name.0 }}</div>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ child.child_id }}</strong></td>
+                        <td><strong>{{ child.first_name }} {{ child.last_name }}</strong></td>
+                        <td>{{ child.age }} years</td>
+                        <td>{{ child.school.name|default:"-" }}</td>
+                        <td>{{ child.household.household_name|default:"-" }}</td>
+                        <td>
+                            {% if child.is_active %}
+                            <span class="badge badge-success">Active</span>
+                            {% else %}
+                            <span class="badge badge-primary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'child-detail' child.id %}" class="btn btn-primary btn-sm">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <!-- Pagination -->
+            {% if children.paginator.num_pages > 1 %}
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; padding: 1.5rem;">
+                {% if children.has_previous %}
+                <a href="?page=1" class="btn btn-outline btn-sm">&laquo; First</a>
+                <a href="?page={{ children.previous_page_number }}" class="btn btn-outline btn-sm">Previous</a>
+                {% endif %}
+                
+                <span style="padding: 0.5rem 1rem;">
+                    Page {{ children.number }} of {{ children.paginator.num_pages }}
+                </span>
+                
+                {% if children.has_next %}
+                <a href="?page={{ children.next_page_number }}" class="btn btn-outline btn-sm">Next</a>
+                <a href="?page={{ children.paginator.num_pages }}" class="btn btn-outline btn-sm">Last &raquo;</a>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% else %}
+            <div style="padding: 3rem; text-align: center;">
+                <i class="fas fa-child" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i>
+                <p style="color: var(--secondary);">No children found</p>
+                <a href="{% url 'add-child' %}" class="btn btn-primary" style="margin-top: 1rem;">Add First Child</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

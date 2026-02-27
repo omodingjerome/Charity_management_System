@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block page_title %}{{ child.full_name }}{% endblock %}
+
+{% block content %}
+<!-- Child Profile Header -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            {% if child.profile_photo %}
+            <img src="{{ child.profile_photo.url }}" style="width: 120px; height: 120px; border-radius: 16px; object-fit: cover;">
+            {% else %}
+            <div style="width: 120px; height: 120px; border-radius: 16px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 600;">
+                {{ child.first_name.0 }}
+            </div>
+            {% endif %}
+            <div>
+                <h1 style="font-size: 1.75rem; font-weight: 700; color: var(--dark);">{{ child.full_name }}</h1>
+                <p style="color: var(--secondary); margin-top: 0.25rem;">Child ID: <strong>{{ child.child_id }}</strong></p>
+                <div style="display: flex; gap: 1.5rem; margin-top: 0.75rem;">
+                    <span style="color: var(--secondary);"><i class="fas fa-birthday-cake" style="margin-right: 0.5rem;"></i> {{ child.age }} years</span>
+                    <span style="color: var(--secondary);"><i class="fas fa-calendar" style="margin-right: 0.5rem;"></i> {{ child.date_of_birth }}</span>
+                    <span class="badge {% if child.is_active %}badge-success{% else %}badge-primary{% endif %}">
+                        {% if child.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Main Details -->
+    <div>
+        <!-- Education -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3><i class="fas fa-graduation-cap" style="margin-right: 0.5rem; color: var(--primary);"></i> Education</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>School:</strong> {{ child.school.name|default:"Not specified" }}</p>
+            </div>
+        </div>
+        
+        <!-- Medical -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3><i class="fas fa-heartbeat" style="margin-right: 0.5rem; color: var(--danger);"></i> Medical</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Condition:</strong> {{ child.chronic_medical_condition|default:"None" }}</p>
+            </div>
+        </div>
+        
+        <!-- Financial Support -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3><i class="fas fa-wallet" style="margin-right: 0.5rem; color: var(--success);"></i> Financial Support</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Income Provider:</strong> {{ child.income_provider|default:"-" }}</p>
+                <p><strong>Education Payer:</strong> {{ child.education_payer|default:"-" }}</p>
+                <p><strong>Medical Payer:</strong> {{ child.medical_payer|default:"-" }}</p>
+            </div>
+        </div>
+        
+        <!-- Household -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3><i class="fas fa-home" style="margin-right: 0.5rem; color: var(--warning);"></i> Household</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Name:</strong> {{ child.household.household_name }}</p>
+                <p><strong>Members:</strong> {{ child.household.number_of_people }}</p>
+                <p><strong>Monthly Income:</strong> UGX {{ child.household.estimated_monthly_income|default:"0"|floatformat:0 }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div>
+        <!-- Caregivers -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3>Caregivers</h3>
+            </div>
+            <div class="card-body">
+                {% if child.caregivers.all %}
+                {% for caregiver in child.caregivers.all %}
+                <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                    <strong>{{ caregiver.name }}</strong><br>
+                    <small style="color: var(--secondary);">{{ caregiver.get_relationship_display }}</small><br>
+                    <small style="color: var(--secondary);"><i class="fas fa-phone"></i> {{ caregiver.phone }}</small>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p style="color: var(--secondary);">No caregivers registered</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Projects -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Enrolled Projects</h3>
+            </div>
+            <div class="card-body">
+                {% if child.projects.all %}
+                {% for project in child.projects.all %}
+                <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                    <strong>{{ project.name }}</strong><br>
+                    <small style="color: var(--secondary);">{{ project.start_date }} - {{ project.end_date|default:"Ongoing" }}</small>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p style="color: var(--secondary);">Not enrolled in any projects</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 1.5rem;">
+    <a href="{% url 'children-directory' %}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back to Directory
+    </a>
+</div>
+{% endblock %}

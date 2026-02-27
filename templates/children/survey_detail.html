@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ survey.title }} - Survey{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-poll"></i> {{ survey.title }}</h2>
+        <div>
+            <a href="{% url 'surveys' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+            {% if survey.is_active %}
+            <a href="{% url 'survey-take' survey.id %}" class="btn btn-success">
+                <i class="fas fa-clipboard-check"></i> Take Survey
+            </a>
+            {% endif %}
+            <a href="{% url 'survey-results' survey.id %}" class="btn btn-warning">
+                <i class="fas fa-chart-bar"></i> Results
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Survey Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Type:</strong> {{ survey.get_survey_type_display }}</p>
+                            <p><strong>Status:</strong> 
+                                {% if survey.is_active %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Created:</strong> {{ survey.created_at|date:"M d, Y" }}</p>
+                            <p><strong>Deadline:</strong> 
+                                {% if survey.deadline %}
+                                {{ survey.deadline|date:"M d, Y" }}
+                                {% else %}
+                                No deadline
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% if survey.description %}
+                    <p><strong>Description:</strong></p>
+                    <p>{{ survey.description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Questions ({{ survey.questions.count }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if survey.questions.all %}
+                        {% for question in survey.questions.all %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <h6>Q{{ forloop.counter }}. {{ question.question_text }}</h6>
+                                <span class="badge bg-info">{{ question.get_question_type_display }}</span>
+                            </div>
+                            {% if question.choices %}
+                            <p class="text-muted mb-1"><small>Choices: {{ question.choices }}</small></p>
+                            {% endif %}
+                            {% if question.is_required %}
+                            <span class="badge bg-danger">Required</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <p class="text-muted">No questions added yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <h3 class="mb-0">{{ survey.responses.count }}</h3>
+                        <small class="text-muted">Total Responses</small>
+                    </div>
+                    <hr>
+                    <a href="{% url 'survey-results' survey.id %}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-chart-bar"></i> View All Results
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

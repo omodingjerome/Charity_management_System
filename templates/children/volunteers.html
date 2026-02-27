@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Volunteers{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Volunteers</h2>
+        <a href="{% url 'add-volunteer' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Volunteer
+        </a>
+    </div>
+    <div class="card-body">
+        <!-- Search and Filters -->
+        <form method="get" class="search-box">
+            <input type="text" name="search" placeholder="Search by name or email..." value="{{ request.GET.search|default:'' }}">
+            <select name="status" class="form-control" style="width: 150px;">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
+            </select>
+            <select name="role" class="form-control" style="width: 180px;">
+                <option value="">All Roles</option>
+                <option value="education">Education Mentor</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="counseling">Counseling</option>
+                <option value="logistics">Logistics</option>
+                <option value="fundraising">Fundraising</option>
+                <option value="general">General Volunteer</option>
+            </select>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Filter
+            </button>
+        </form>
+
+        <!-- Table -->
+        <div class="table-container">
+            {% if volunteers %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Volunteer</th>
+                        <th>Role</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Hours</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for volunteer in volunteers %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                {% if volunteer.photo %}
+                                <img src="{{ volunteer.photo.url }}" class="child-photo" alt="">
+                                {% else %}
+                                <div class="child-avatar">{{ volunteer.first_name.0 }}{{ volunteer.last_name.0 }}</div>
+                                {% endif %}
+                                <strong>{{ volunteer.full_name }}</strong>
+                            </div>
+                        </td>
+                        <td>
+                            {% if volunteer.role == 'education' %}
+                            <span class="badge" style="background: #dbeafe; color: #1d4ed8;">Education</span>
+                            {% elif volunteer.role == 'healthcare' %}
+                            <span class="badge" style="background: #dcfce7; color: #16a34a;">Healthcare</span>
+                            {% elif volunteer.role == 'counseling' %}
+                            <span class="badge" style="background: #fce7f3; color: #db2777;">Counseling</span>
+                            {% elif volunteer.role == 'logistics' %}
+                            <span class="badge" style="background: #fef3c7; color: #d97706;">Logistics</span>
+                            {% elif volunteer.role == 'fundraising' %}
+                            <span class="badge" style="background: #e0e7ff; color: #4f46e5;">Fundraising</span>
+                            {% else %}
+                            <span class="badge" style="background: #f3f4f6; color: #6b7280;">General</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ volunteer.email }}</td>
+                        <td>{{ volunteer.phone }}</td>
+                        <td>{{ volunteer.hours_contributed }} hrs</td>
+                        <td>{{ volunteer.date_joined|date:"M d, Y" }}</td>
+                        <td>
+                            {% if volunteer.status == 'active' %}
+                            <span class="badge badge-success">Active</span>
+                            {% elif volunteer.status == 'inactive' %}
+                            <span class="badge" style="background: #fee2e2; color: #dc2626;">Inactive</span>
+                            {% else %}
+                            <span class="badge badge-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="padding: 3rem; text-align: center;">
+                <i class="fas fa-hands-helping" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i>
+                <p style="color: var(--secondary);">No volunteers found</p>
+                <a href="{% url 'add-volunteer' %}" class="btn btn-primary" style="margin-top: 1rem;">Add First Volunteer</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

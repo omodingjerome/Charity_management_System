@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #ccfbf1; color: #0d9488;">
+            <i class="fas fa-child"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ total_children }}</h3>
+            <p>Total Children</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #d1fae5; color: #059669;">
+            <i class="fas fa-user-check"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ active_children }}</h3>
+            <p>Active Children</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
+            <i class="fas fa-hands-helping"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ total_volunteers }}</h3>
+            <p>Volunteers</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #fee2e2; color: #dc2626;">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ total_hours }}</h3>
+            <p>Hours Contributed</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Recent Children -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Recent Children</h2>
+            <a href="{% url 'children-directory' %}" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="table-container">
+            {% if recent_children %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Child</th>
+                        <th>Age</th>
+                        <th>School</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for child in recent_children %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                {% if child.profile_photo %}
+                                <img src="{{ child.profile_photo.url }}" class="child-photo" alt="">
+                                {% else %}
+                                <div class="child-avatar">{{ child.first_name.0 }}</div>
+                                {% endif %}
+                                <div>
+                                    <strong>{{ child.first_name }} {{ child.last_name }}</strong><br>
+                                    <small style="color: var(--secondary);">{{ child.child_id }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ child.age }} yrs</td>
+                        <td>{{ child.school.name|default:"-" }}</td>
+                        <td>
+                            {% if child.is_active %}
+                            <span class="badge badge-success">Active</span>
+                            {% else %}
+                            <span class="badge badge-primary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'child-detail' child.id %}" class="btn btn-primary btn-sm">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="padding: 3rem; text-align: center;">
+                <i class="fas fa-child" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i>
+                <p style="color: var(--secondary);">No children added yet</p>
+                <a href="{% url 'add-child' %}" class="btn btn-primary" style="margin-top: 1rem;">Add First Child</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div>
+        <!-- Quick Links -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3>Quick Links</h3>
+            </div>
+            <div class="card-body">
+                <div class="quick-links">
+                    <a href="{% url 'children-directory' %}" class="quick-link">
+                        <i class="fas fa-users"></i> Children Directory
+                    </a>
+                    <a href="{% url 'add-child' %}" class="quick-link">
+                        <i class="fas fa-user-plus"></i> Add New Child
+                    </a>
+                    <a href="{% url 'households' %}" class="quick-link">
+                        <i class="fas fa-house-user"></i> View Households
+                    </a>
+                    <a href="{% url 'volunteers' %}" class="quick-link">
+                        <i class="fas fa-hands-helping"></i> Manage Volunteers
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Overview</h3>
+            </div>
+            <div class="card-body" style="padding: 0.5rem;">
+                <ul class="stats-list">
+                    <li>
+                        <span>Total Children</span>
+                        <span>{{ total_children }}</span>
+                    </li>
+                    <li>
+                        <span>Active Children</span>
+                        <span>{{ active_children }}</span>
+                    </li>
+                    <li>
+                        <span>Total Volunteers</span>
+                        <span>{{ total_volunteers }}</span>
+                    </li>
+                    <li>
+                        <span>Active Volunteers</span>
+                        <span>{{ active_volunteers }}</span>
+                    </li>
+                    <li>
+                        <span>Total Hours</span>
+                        <span>{{ total_hours }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

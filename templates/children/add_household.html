@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Add Household{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Add New Household</h2>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Household Name *</label>
+                <input type="text" name="household_name" class="form-control" required>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label>Number of People *</label>
+                    <input type="number" name="number_of_people" class="form-control" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Children Under 18</label>
+                    <input type="number" name="children_under_18" class="form-control" min="0" value="0">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Main Income Source</label>
+                <input type="text" name="main_income_source" class="form-control">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label>Estimated Monthly Income</label>
+                    <input type="number" name="estimated_monthly_income" class="form-control" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Residence Type</label>
+                    <select name="residence_type" class="form-control">
+                        <option value="informal">Informal/Slum</option>
+                        <option value="rented">Rented</option>
+                        <option value="owned">Owned</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" name="consistent_income_6months" style="width: 18px; height: 18px;"> 
+                    Consistent income for 6 months
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" name="is_savings_group_member" style="width: 18px; height: 18px;"> 
+                    Part of savings group
+                </label>
+            </div>
+            
+            <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
+                <input type="checkbox" name="can_pay_emergency" style="width: 18px; height: 18px;"> 
+                Can pay emergency expense
+            </label>
+            
+            <div class="form-group">
+                <label>Household Assets</label>
+                <textarea name="household_assets" class="form-control" rows="3" placeholder="e.g., TV, Bicycle, Livestock"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Household
+                </button>
+                <a href="{% url 'households' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

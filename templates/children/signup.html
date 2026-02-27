@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Charity Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .signup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .signup-header {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            padding: 30px 40px 25px;
+            text-align: center;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .signup-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .signup-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .signup-header i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .signup-body {
+            padding: 30px 40px 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            font-family: inherit;
+            background: white;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #0d9488;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn-signup {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+        
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(13, 148, 136, 0.3);
+        }
+        
+        .signup-footer {
+            text-align: center;
+            padding: 0 40px 30px;
+        }
+        
+        .signup-footer a {
+            color: #0d9488;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .signup-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        
+        .alert-success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .user-type-section {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .user-type-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .user-type-option:last-child {
+            margin-bottom: 0;
+        }
+        
+        .user-type-option input[type="radio"] {
+            width: auto;
+        }
+        
+        .user-type-option label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        
+        .volunteer-fields {
+            display: none;
+        }
+        
+        .volunteer-fields.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-header">
+            <i class="fas fa-user-plus"></i>
+            <h1>Create Account</h1>
+            <p>Join our charity management system</p>
+        </div>
+        
+        <div class="signup-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" id="signupForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>Account Type</label>
+                    <div class="user-type-section">
+                        <div class="user-type-option">
+                            <input type="radio" name="user_type" id="volunteer" value="volunteer" checked onchange="toggleFields()">
+                            <label for="volunteer">Volunteer</label>
+                        </div>
+                        <div class="user-type-option">
+                            <input type="radio" name="user_type" id="admin" value="admin" onchange="toggleFields()">
+                            <label for="admin">Administrator</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        <input type="text" name="first_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        <input type="text" name="last_name" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Username *</label>
+                    <input type="text" name="username" placeholder="Choose a username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group volunteer-fields" id="volunteerFields">
+                    <label>Phone</label>
+                    <input type="text" name="phone" placeholder="Enter phone number">
+                </div>
+                
+                <div class="form-group volunteer-fields" id="roleField">
+                    <label>Role</label>
+                    <select name="role">
+                        <option value="general">General Volunteer</option>
+                        <option value="education">Education Mentor</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="counseling">Counseling</option>
+                        <option value="logistics">Logistics</option>
+                        <option value="fundraising">Fundraising</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <input type="password" name="password" placeholder="Create password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password *</label>
+                        <input type="password" name="confirm_password" placeholder="Confirm password" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-signup">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+        </div>
+        
+        <div class="signup-footer">
+            <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+    
+    <script>
+        function toggleFields() {
+            const userType = document.querySelector('input[name="user_type"]:checked').value;
+            const volunteerFields = document.querySelectorAll('.volunteer-fields');
+            
+            if (userType === 'volunteer') {
+                volunteerFields.forEach(field => field.classList.add('show'));
+            } else {
+                volunteerFields.forEach(field => field.classList.remove('show'));
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', toggleFields);
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Households{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Households</h2>
+        <a href="{% url 'add-household' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Household
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-container">
+            {% if households %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Household Name</th>
+                        <th>People</th>
+                        <th>Children Under 18</th>
+                        <th>Income Source</th>
+                        <th>Monthly Income</th>
+                        <th>Residence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for household in households %}
+                    <tr>
+                        <td><strong>{{ household.household_name }}</strong></td>
+                        <td>{{ household.number_of_people }}</td>
+                        <td>{{ household.children_under_18 }}</td>
+                        <td>{{ household.main_income_source|default:"-" }}</td>
+                        <td>UGX {{ household.estimated_monthly_income|default:"0"|floatformat:0 }}</td>
+                        <td>
+                            <span class="badge badge-primary">{{ household.get_residence_type_display }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="padding: 3rem; text-align: center;">
+                <i class="fas fa-home" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i>
+                <p style="color: var(--secondary);">No households found</p>
+                <a href="{% url 'add-household' %}" class="btn btn-primary" style="margin-top: 1rem;">Add First Household</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Add Volunteer{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Add New Volunteer</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Personal Information -->
+            <h3 style="margin-bottom: 1.25rem; color: var(--dark); font-size: 1rem; font-weight: 600;">
+                <i class="fas fa-user" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                Personal Information
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" name="first_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" name="last_name" class="form-control" required>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <h3 style="margin-bottom: 1.25rem; color: var(--dark); font-size: 1rem; font-weight: 600;">
+                <i class="fas fa-address-card" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                Contact Information
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone *</label>
+                    <input type="text" name="phone" class="form-control" required>
+                </div>
+            </div>
+            
+            <!-- Role & Status -->
+            <h3 style="margin-bottom: 1.25rem; color: var(--dark); font-size: 1rem; font-weight: 600;">
+                <i class="fas fa-briefcase" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                Role & Status
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" class="form-control">
+                        <option value="general">General Volunteer</option>
+                        <option value="education">Education Mentor</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="counseling">Counseling</option>
+                        <option value="logistics">Logistics</option>
+                        <option value="fundraising">Fundraising</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status" class="form-control">
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Additional Info -->
+            <h3 style="margin-bottom: 1.25rem; color: var(--dark); font-size: 1rem; font-weight: 600;">
+                <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                Additional Information
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                <div class="form-group">
+                    <label>Hours Contributed</label>
+                    <input type="number" name="hours_contributed" class="form-control" min="0" step="0.5" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Photo</label>
+                    <input type="file" name="photo" class="form-control" accept="image/*" style="padding: 0.5rem;">
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label>Notes</label>
+                <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes about the volunteer..."></textarea>
+            </div>
+            
+            <!-- Actions -->
+            <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Volunteer
+                </button>
+                <a href="{% url 'volunteers' %}" class="btn btn-outline">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

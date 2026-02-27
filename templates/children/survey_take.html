@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Take Survey - {{ survey.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-clipboard-check"></i> {{ survey.title }}</h2>
+        <a href="{% url 'surveys' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Surveys
+        </a>
+    </div>
+
+    {% if survey.description %}
+    <div class="alert alert-info mb-4">
+        <i class="fas fa-info-circle"></i> {{ survey.description }}
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" id="surveyForm">
+                {% csrf_token %}
+                
+                <!-- Optional: Link to Child or Household -->
+                <div class="card mb-4 bg-light">
+                    <div class="card-body">
+                        <h6>Survey Context (Optional)</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Related Child</label>
+                                <select name="child" class="form-select">
+                                    <option value="">-- Select Child (Optional) --</option>
+                                    {% for child in children %}
+                                    <option value="{{ child.id }}">{{ child.full_name }} ({{ child.child_id }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Related Household</label>
+                                <select name="household" class="form-select">
+                                    <option value="">-- Select Household (Optional) --</option>
+                                    {% for hh in households %}
+                                    <option value="{{ hh.id }}">{{ hh.household_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Questions -->
+                {% for question in survey.questions.all %}
+                <div class="mb-4">
+                    <label class="form-label">
+                        <strong>Q{{ forloop.counter }}. {{ question.question_text }}</strong>
+                        {% if question.is_required %}<span class="text-danger">*</span>{% endif %}
+                    </label>
+                    
+                    {% if question.question_type == 'text' %}
+                    <input type="text" name="question_{{ question.id }}" class="form-control" {% if question.is_required %}required{% endif %}>
+                    
+                    {% elif question.question_type == 'textarea' %}
+                    <textarea name="question_{{ question.id }}" class="form-control" rows="3" {% if question.is_required %}required{% endif %}></textarea>
+                    
+                    {% elif question.question_type == 'number' %}
+                    <input type="number" name="question_{{ question.id }}" class="form-control" {% if question.is_required %}required{% endif %}>
+                    
+                    {% elif question.question_type == 'date' %}
+                    <input type="date" name="question_{{ question.id }}" class="form-control" {% if question.is_required %}required{% endif %}>
+                    
+                    {% elif question.question_type == 'yes_no' %}
+                    <div class="mt-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="Yes" {% if question.is_required %}required{% endif %}>
+                            <label class="form-check-label">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="No" {% if question.is_required %}required{% endif %}>
+                            <label class="form-check-label">No</label>
+                        </div>
+                    </div>
+                    
+                    {% elif question.question_type == 'choice' %}
+                    <select name="question_{{ question.id }}" class="form-select mt-2" {% if question.is_required %}required{% endif %}>
+                        <option value="">-- Select --</option>
+                        {% for choice in question.get_choices_list %}
+                        <option value="{{ choice }}">{{ choice }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    {% elif question.question_type == 'multiple' %}
+                    <div class="mt-2">
+                        {% for choice in question.get_choices_list %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="question_{{ question.id }}" value="{{ choice }}">
+                            <label class="form-check-label">{{ choice }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <hr>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'surveys' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i> Submit Survey
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

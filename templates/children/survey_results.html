@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Survey Results - {{ survey.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-chart-bar"></i> Survey Results: {{ survey.title }}</h2>
+        <a href="{% url 'surveys' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Surveys
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h3 class="mb-0">{{ responses.count }}</h3>
+                            <small class="text-muted">Total Responses</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h3 class="mb-0">{{ survey.questions.count }}</h3>
+                            <small class="text-muted">Questions</small>
+                        </div>
+                        <div class="col-md-4">
+                            {% if survey.deadline %}
+                            <h3 class="mb-0">{{ survey.deadline|date:"M d" }}</h3>
+                            <small class="text-muted">Deadline</small>
+                            {% else %}
+                            <h3 class="mb-0">-</h3>
+                            <small class="text-muted">No Deadline</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">All Responses</h5>
+        </div>
+        <div class="card-body">
+            {% if responses %}
+            <div class="accordion" id="responsesAccordion">
+                {% for response in responses %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#response{{ response.id }}">
+                            <div class="d-flex justify-content-between w-100 align-items-center pe-3">
+                                <span>
+                                    <strong>{{ response.respondent.full_name }}</strong>
+                                    {% if response.child %}
+                                    - {{ response.child.full_name }}
+                                    {% endif %}
+                                </span>
+                                <span class="text-muted">{{ response.submitted_at|date:"M d, Y H:i" }}</span>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="response{{ response.id }}" class="accordion-collapse collapse" data-bs-parent="#responsesAccordion">
+                        <div class="accordion-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <small class="text-muted">Respondent:</small><br>
+                                    {{ response.respondent.full_name }}
+                                </div>
+                                {% if response.child %}
+                                <div class="col-md-6">
+                                    <small class="text-muted">Related Child:</small><br>
+                                    {{ response.child.full_name }} ({{ response.child.child_id }})
+                                </div>
+                                {% endif %}
+                                {% if response.household %}
+                                <div class="col-md-6">
+                                    <small class="text-muted">Related Household:</small><br>
+                                    {{ response.household.household_name }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <hr>
+                            
+                            {% for answer in response.answers.all %}
+                            <div class="mb-3">
+                                <strong>Q{{ forloop.counter }}. {{ answer.question.question_text }}</strong>
+                                <p class="mb-0 mt-1 ps-3">
+                                    {% if answer.answer_text %}
+                                    {{ answer.answer_text }}
+                                    {% else %}
+                                    <span class="text-muted">No answer</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h5>No Responses Yet</h5>
+                <p class="text-muted">This survey hasn't been taken by anyone yet.</p>
+                {% if survey.is_active %}
+                <a href="{% url 'survey-take' survey.id %}" class="btn btn-success">
+                    <i class="fas fa-clipboard-check"></i> Take Survey
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

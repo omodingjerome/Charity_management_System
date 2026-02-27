@@ -1,0 +1,22 @@
+# Django core and REST Framework
+Django>=4.2,<5.0
+djangorestframework>=3.14.0
+django-filter>=23.0
+
+# Database
+psycopg2-binary>=2.9.9
+
+# Authentication
+djangorestframework-simplejwt>=5.3.0
+
+# Image handling
+Pillow>=10.0.0
+
+# Environment configuration
+python-dotenv>=1.0.0
+
+# CORS headers
+django-cors-headers>=4.3.0
+
+# Additional utilities
+python-dateutil>=2.8.2

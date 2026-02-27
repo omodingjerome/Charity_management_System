@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Surveys - Charity Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-poll"></i> Surveys</h2>
+        <a href="{% url 'survey-create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create Survey
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Survey Type</label>
+                    <select name="type" class="form-select">
+                        <option value="">All Types</option>
+                        <option value="household" {% if survey_type == 'household' %}selected{% endif %}>Household Assessment</option>
+                        <option value="child" {% if survey_type == 'child' %}selected{% endif %}>Child Assessment</option>
+                        <option value="feedback" {% if survey_type == 'feedback' %}selected{% endif %}>Feedback Survey</option>
+                        <option value="evaluation" {% if survey_type == 'evaluation' %}selected{% endif %}>Program Evaluation</option>
+                        <option value="other" {% if survey_type == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All</option>
+                        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-secondary w-100">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Surveys List -->
+    <div class="card">
+        <div class="card-body">
+            {% if surveys %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Responses</th>
+                            <th>Created</th>
+                            <th>Deadline</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for survey in surveys %}
+                        <tr>
+                            <td>
+                                <strong>{{ survey.title }}</strong>
+                                {% if survey.description %}
+                                <br><small class="text-muted">{{ survey.description|truncatewords:15 }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    {{ survey.get_survey_type_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if survey.is_active %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">{{ survey.response_count }}</span>
+                            </td>
+                            <td>{{ survey.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if survey.deadline %}
+                                {{ survey.deadline|date:"M d, Y" }}
+                                {% else %}
+                                <span class="text-muted">No deadline</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'survey-detail' survey.id %}" class="btn btn-sm btn-info" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'survey-take' survey.id %}" class="btn btn-sm btn-success" title="Take Survey">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </a>
+                                    <a href="{% url 'survey-results' survey.id %}" class="btn btn-sm btn-warning" title="View Results">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-poll fa-3x text-muted mb-3"></i>
+                <h5>No Surveys Found</h5>
+                <p class="text-muted">Create your first survey to get started.</p>
+                <a href="{% url 'survey-create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Survey
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
