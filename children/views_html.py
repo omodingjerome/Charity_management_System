@@ -185,11 +185,14 @@ def add_child(request):
     """Add Child Record Form"""
     if request.method == 'POST':
         # Handle form submission
+        # Only use provided child_id if not empty, otherwise signal will auto-generate
+        child_id = request.POST.get('child_id', '').strip() or None
+        
         child = Child(
             first_name=request.POST.get('first_name'),
             last_name=request.POST.get('last_name'),
             date_of_birth=request.POST.get('date_of_birth'),
-            child_id=request.POST.get('child_id'),
+            child_id=child_id,
             chronic_medical_condition=request.POST.get('chronic_medical_condition', ''),
             income_provider=request.POST.get('income_provider', ''),
             education_payer=request.POST.get('education_payer', ''),

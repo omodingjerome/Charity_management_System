@@ -8,3 +8,7 @@ class ChildrenConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'children'
     verbose_name = 'Children & Households Management'
+
+    def ready(self):
+        # Import signals to register them
+        import children.signals
